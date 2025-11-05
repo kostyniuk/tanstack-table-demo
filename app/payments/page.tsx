@@ -19,6 +19,8 @@ export default async function Payments() {
     return (
         <div className="container py-10 mx-auto">
             <DataTable columns={columns} data={data} />
+            <br />
+            <DataTable columns={columns} data={[]} />
         </div>
     );
 }

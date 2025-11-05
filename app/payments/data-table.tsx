@@ -2,19 +2,19 @@
 
 import {
     ColumnDef,
-    // flexRender,
+    flexRender, //to render the header and cell despite of the input type - jsx, string, function, etc.
     getCoreRowModel,
     useReactTable,
 } from "@tanstack/react-table"
 
-// import {
-//     Table,
-//     TableBody,
-//     TableCell,
-//     TableHead,
-//     TableHeader,
-//     TableRow,
-// } from "@/components/ui/table"
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -31,10 +31,44 @@ export function DataTable<TData, TValue>({
         getCoreRowModel: getCoreRowModel(),
     })
 
-    console.log(table.getRowModel().rows) // array of rows
-    console.log(table.getRowModel().flatRows) // array of rows, but all sub-rows are flattened into the top level
-    console.log(table.getRowModel().rowsById['0']) // get rows by id
-    console.log(table);
+    // console.log(table.getRowModel().rows) // array of rows
+    // console.log(table.getRowModel().flatRows) // array of rows, but all sub-rows are flattened into the top level
+    // console.log(table.getRowModel().rowsById['0']) // get rows by id
+    // console.log(table);
 
-    return null;
+    const headerGroups = table.getHeaderGroups();
+    // console.log(headers);
+
+    return (
+        <div className="overflow-hidden rounded-md border">
+            <Table>
+                <TableHeader>
+                    {headerGroups.map((headerGroup) => (
+                        <TableRow key={headerGroup.id}>
+                            {headerGroup.headers.map((header) => (
+                                <TableHead key={header.id}>
+                                    {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                                </TableHead>
+                            ))}
+                        </TableRow>
+                    ))}
+                </TableHeader>
+                <TableBody>
+                    {table.getRowModel().rows?.length ? (
+                        table.getRowModel().rows.map((row) => (
+                            <TableRow key={row.id}>
+                                {row.getVisibleCells().map((cell) => (
+                                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                                ))}
+                            </TableRow>
+                        ))
+                    ) : (
+                        <TableRow>
+                            <TableCell colSpan={columns.length} className="h-24 text-center">No results.</TableCell>
+                        </TableRow>
+                    )}
+                </TableBody>
+            </Table>
+        </div>
+    );
 }
