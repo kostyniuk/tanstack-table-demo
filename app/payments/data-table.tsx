@@ -5,6 +5,7 @@ import {
     flexRender, //to render the header and cell despite of the input type - jsx, string, function, etc.
     getCoreRowModel,
     getPaginationRowModel,
+    getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table"
 
@@ -33,6 +34,7 @@ export function DataTable<TData, TValue>({
         columns,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
+        getSortedRowModel: getSortedRowModel(),
         initialState: {
             pagination: {
                 pageSize: 3, // default page size
