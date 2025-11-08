@@ -2,8 +2,10 @@
 
 import {
     ColumnDef,
+    ColumnFiltersState,
     flexRender, //to render the header and cell despite of the input type - jsx, string, function, etc.
     getCoreRowModel,
+    getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
     SortingState,
@@ -21,6 +23,7 @@ import {
 
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
+import { Input } from "@/components/ui/input"
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -32,6 +35,7 @@ export function DataTable<TData, TValue>({
     data,
 }: DataTableProps<TData, TValue>) {
     const [sorting, setSorting] = useState<SortingState>([])
+    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
     const table = useReactTable({
         data,
         columns,
@@ -39,13 +43,16 @@ export function DataTable<TData, TValue>({
         getPaginationRowModel: getPaginationRowModel(),
         onSortingChange: setSorting,
         getSortedRowModel: getSortedRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        onColumnFiltersChange: setColumnFilters,
         initialState: {
             pagination: {
                 pageSize: 3, // default page size
             },
         },
         state: {
-            sorting
+            sorting,
+            columnFilters,
         },
     })
 
@@ -60,6 +67,14 @@ export function DataTable<TData, TValue>({
     return (
         <div>
             <div className="overflow-hidden rounded-md border">
+                <div className="flex items-center py-4">
+                    <Input
+                        placeholder="Filter emails..."
+                        value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+                        onChange={(event) => table.getColumn("email")?.setFilterValue(event.target.value)}
+                        className="max-w-sm"
+                    />
+                </div>
                 <Table>
                     <TableHeader>
                         {headerGroups.map((headerGroup) => (
